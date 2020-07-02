@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qtquickcontrols2.conf</file>
+
+        <file>ui/main.ui.qml</file>
+        <file>ui/home.ui.qml</file>
+        <file>ui/list.ui.qml</file>
+
+        <file>wav/meow.wav</file>
+        <file>wav/meow2.wav</file>
+
+    </qresource>
+</RCC>
