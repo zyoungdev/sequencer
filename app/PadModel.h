@@ -250,7 +250,7 @@ class PadModel : public QAbstractListModel
     /* maximum volume on all channels */
     Mix_Volume( -1, 128 );
     /* set number of simultaneous wavs */
-    Mix_AllocateChannels( MAXPADSIZE * MAXPADSIZE );
+    Mix_AllocateChannels( MAXPADSIZE * MAXPADSIZE * MAXPADSIZE );
 
     m_wavs.reserve( m_wav_filenames.size() );
 
