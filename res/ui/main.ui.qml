@@ -74,7 +74,7 @@ ApplicationWindow {
 
   StackView {
     id: stackView
-    initialItem: "list.ui.qml"
+    initialItem: "home.ui.qml"
     anchors.fill: parent
   }
 }
