@@ -55,9 +55,3 @@ add_custom_command(
     TARGET ${PROJECT_NAME} PRE_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
     ${CMAKE_SOURCE_DIR}/res/wav $<TARGET_FILE_DIR:sequencer>/wav)
-
-add_custom_command(
-    TARGET ${PROJECT_NAME} PRE_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/res/mp3 $<TARGET_FILE_DIR:sequencer>/mp3)
-
