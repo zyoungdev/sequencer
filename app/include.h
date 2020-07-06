@@ -30,4 +30,6 @@
 #include <vector>
 #include <random>
 
+#include "lib/midifile/include/MidiFile.h"
+
 #endif
