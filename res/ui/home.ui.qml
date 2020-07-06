@@ -2,7 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.2
 // import com.app 1.0 // Wav
 import QtGraphicalEffects 1.12 // RadialGradient
-import QtQuick.Layouts 1.11
+import QtQuick.Layouts 1.15
 import QtQuick.Controls.Material 2.12
 import Qt.labs.platform 1.1
 
