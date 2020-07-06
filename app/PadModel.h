@@ -358,6 +358,14 @@ class PadModel : public QAbstractListModel
     }
   }
 
+  void play( int padNum )
+  {
+    if ( Mix_PlayChannel( -1, m_wavs[ m_chord[ padNum / PADSIZE ] ], 0 ) == -1 )
+    {
+      qDebug() << Mix_GetError();
+    }
+  }
+
   static int padSize()
   {
     return PADSIZE;
@@ -398,6 +406,11 @@ class PadModel : public QAbstractListModel
   void toggleEngaged( int index )
   {
     m_pads[ index ].toggleEngaged();
+
+    if ( m_pads[ index ].engaged() )
+    {
+      play( index );
+    }
 
     QModelIndex i = createIndex( index, 0 );
     emit dataChanged(i, i, { EngagedRole });
