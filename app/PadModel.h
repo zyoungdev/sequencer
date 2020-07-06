@@ -494,19 +494,9 @@ class PadModel : public QAbstractListModel
     midifile.sortTracks();
     midifile.joinTracks();
 
-    std::time_t now = std::chrono::system_clock::to_time_t( std::chrono::system_clock::now() );
-
-    char mbstr[100];
-
-    if ( std::strftime(mbstr, sizeof( mbstr ), "%Y%m%d_%H%M%S", std::localtime( &now )) ) {
-
-      std::string path = QUrl( filename  ).path().toStdString();
-      if ( ! filename.endsWith( ".mid" ) )
-      {
-        path += ".mid";
-      }
-      midifile.write( path );
-    }
+    std::string path = QUrl( filename  ).path().toStdString();
+    path += filename.endsWith( ".mid" ) ? "" : ".mid";
+    midifile.write( path );
   }
 
   signals:

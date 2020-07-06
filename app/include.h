@@ -29,7 +29,6 @@
 #include <memory>
 #include <vector>
 #include <random>
-#include <chrono>
 
 #include "lib/midifile/include/MidiFile.h"
 
