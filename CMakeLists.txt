@@ -33,12 +33,9 @@ include_directories(
     ${SDL2_INCLUDE_DIRS}
     ${MIDIFILE_INCLUDE_DIRS}
     ${MIDIFILE_INCLUDE_DIRS}/include
-    ${MIDIFILE_INCLUDE_DIRS}/src
 )
 
-set(
-    MIDIFILE_FILES
-
+add_library( midifile STATIC
     lib/midifile/include/Binasc.h
     lib/midifile/include/MidiEvent.h
     lib/midifile/include/MidiEventList.h
@@ -53,8 +50,6 @@ set(
     lib/midifile/src/MidiFile.cpp
     lib/midifile/src/MidiMessage.cpp
 )
-
-add_library(midifile STATIC ${MIDIFILE_FILES})
 
 set(
     MAIN_FILES
