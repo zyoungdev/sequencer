@@ -11,7 +11,7 @@ int main( int argc, char *argv[] )
 
   QQmlApplicationEngine engine;
 
-  qmlRegisterType<Wav>("com.app", 1, 0, "Wav");
+  // qmlRegisterType<Wav>("com.app", 1, 0, "Wav");
 
   engine.rootContext()->setContextProperty( "padModel", QVariant::fromValue( &padModel ) );
   engine.rootContext()->setContextProperty( "engineModel", QVariant::fromValue( &engineModel ) );

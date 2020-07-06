@@ -1,10 +1,21 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.2
-import com.app 1.0 // padModel, engineModel
+// import com.app 1.0 // Wav
 import QtGraphicalEffects 1.12 // RadialGradient
+import QtQuick.Layouts 1.11
+import QtQuick.Controls.Material 2.12
 
 Page {
+
+  function resetRandomOptionsBoxPosition() {
+    randomOptionsBox.x = 0
+    randomOptionsBox.y = 0
+  }
+
+
   id: page
+  onWidthChanged:resetRandomOptionsBoxPosition()
+  onHeightChanged:resetRandomOptionsBoxPosition()
 
   /* controls */
   Row {
@@ -67,23 +78,6 @@ Page {
   Column {
     anchors.left: padGrid.right
     anchors.verticalCenter: padGrid.verticalCenter
-    Button {
-      text: "Random"
-      onClicked: {
-        var wasRunning = engineModel.isRunning();
-        if ( wasRunning )
-        {
-          engineModel.stop();
-        }
-
-        padModel.random();
-
-        if ( wasRunning )
-        {
-          engineModel.play( false );
-        }
-      }
-    }
     ComboBox {
       model: ListModel {
         ListElement { text: "C" }
@@ -167,6 +161,7 @@ Page {
     cellHeight: height / padModel.padSize
     cellWidth: cellHeight
     interactive: false
+    Layout.minimumHeight: 700
 
     delegate: Component {
       Item {
@@ -251,7 +246,95 @@ Page {
       } // Item
     } // delegate
   } // GridView
+
+  Row {
+    anchors.top: padGrid.bottom
+    anchors.horizontalCenter: padGrid.horizontalCenter
+    Button {
+      text: "Random"
+      onClicked:
+      {
+        randomOptionsBox.visible = ! randomOptionsBox.visible
+        randomOptionsBoxShadow.visible = ! randomOptionsBoxShadow.visible
+      }
+    }
+  }
+
+  /* Random Options */
+  Rectangle {
+    id: randomOptionsBox
+    // anchors.centerIn: parent
+    visible: false
+    width: 250
+    height: 150
+    color: "#ff303030"
+
+
+
+    DragHandler { }
+
+    Column {
+      /* Pattern */
+      anchors.fill: parent
+      padding: 5
+      topPadding: 10
+
+      Label {
+        text: "Notes per column pattern (e.g. 1212)"
+        anchors.horizontalCenter: parent.horizontalCenter
+        wrapMode: Label.WordWrap
+        width: 200
+      }
+
+      TextField {
+        id: randomPattern
+        anchors.horizontalCenter: parent.horizontalCenter
+        width: 175
+        text: "1212"
+        horizontalAlignment: Qt.AlignHCenter
+      }
+
+      /* Apply/Close */
+      Row {
+        anchors.horizontalCenter: parent.horizontalCenter
+        padding: 5
+        Button {
+          text: "Apply"
+
+          onClicked: {
+            var wasRunning = engineModel.isRunning();
+            if ( wasRunning )
+            {
+              engineModel.stop();
+            }
+
+            padModel.random( randomPattern.text );
+
+            if ( wasRunning )
+            {
+              engineModel.play( false );
+            }
+          }
+        }
+        Button {
+          text: "Close"
+
+          onPressed: randomOptionsBox.visible = false
+        }
+      }
+    }
+  }
+
+  DropShadow {
+    id: randomOptionsBoxShadow
+    visible: false
+    anchors.fill: randomOptionsBox
+    horizontalOffset: 3
+    verticalOffset: 3
+    spread: 0.0
+    radius: 20.0
+    samples: 25
+    color: "#80000000"
+    source: randomOptionsBox
+  }
 }
-
-
-

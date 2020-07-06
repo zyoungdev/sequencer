@@ -321,7 +321,7 @@ class PadModel : public QAbstractListModel
 
   void update( int col )
   {
-    qDebug() << "PadModel::update" << col;
+    // qDebug() << "PadModel::update" << col;
 
     /* Play the sounds ASAP */
     for (int i = 0 ; i < PADSIZE ; i += 1)
@@ -392,6 +392,7 @@ class PadModel : public QAbstractListModel
   }
 
   public slots:
+
   void toggleEngaged( int index )
   {
     m_pads[ index ].toggleEngaged();
@@ -426,7 +427,7 @@ class PadModel : public QAbstractListModel
     emit padSizeChanged( PADSIZE );
   }
 
-  void random()
+  void random( QString pattern )
   {
     clear();
 
@@ -436,16 +437,20 @@ class PadModel : public QAbstractListModel
 
     for ( int i = 0 ; i < PADSIZE ; i += 1 )
     {
-      int prevInt = -1;
-      for ( int j = 0 ; j < PADSIZE / 4 + 1 ; j += 1 )
+      int numToToggle = pattern[ i % pattern.count() ].digitValue();
+      numToToggle = numToToggle > PADSIZE ? PADSIZE : numToToggle;
+
+      std::vector<bool> isSet( PADSIZE, false );
+
+      for ( int j = 0 ; j < numToToggle ; j += 1 )
       {
         int newInt = distrib( gen );
-        while ( newInt == prevInt )
+        while ( isSet[ newInt ] )
         {
           newInt = distrib( gen );
         }
 
-        prevInt = newInt;
+        isSet[ newInt ] = true;
 
         toggleEngaged( i + newInt * PADSIZE );
       }
@@ -459,7 +464,5 @@ class PadModel : public QAbstractListModel
   void rootNoteChanged();
   void qualityChanged();
 };
-
-
 
 #endif
