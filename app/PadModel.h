@@ -460,55 +460,52 @@ class PadModel : public QAbstractListModel
     }
   }
 
+  /* Save the pattern to file */
   void saveMidiFile( QString filename )
   {
-    smf::MidiFile outputfile;
-    outputfile.absoluteTicks();
-    outputfile.addTrack(1);
-
-    std::vector<uchar> midievent;
-    midievent.resize(3);
-
     int track = 1;
     int tpq = 120; // ticks per quarter
     int tp16th = tpq / 4; // ticks per sixteenth
     int midinote_offset = 24;
+    int velocity = 100;
     int tick_count = 0;
 
-    outputfile.setTicksPerQuarterNote(tpq);
+    smf::MidiFile midifile;
+    midifile.absoluteTicks();
+    midifile.addTrack( track );
+    midifile.setTicksPerQuarterNote( tpq );
 
-    midievent[2] = 100; // velocity, 0 <= v <= 127
-    std::vector<std::vector<int>> all_cols;
     for ( int i = 0 ; i < PADSIZE ; i += 1 ) // for each column
     {
-      std::vector<int> pads;
       for ( int j = 0 ; j < PADSIZE ; j += 1 ) // for each pad
       {
-        int note_idx = i + j * PADSIZE;
-        if ( m_pads[ note_idx ].engaged() )
+        int pad_idx = i + j * PADSIZE;
+        if ( m_pads[ pad_idx ].engaged() )
         {
-          midievent[0] = 0x90;
-          midievent[1] = note_idx + midinote_offset;
-          outputfile.addEvent( track, tick_count, midievent );
-          tick_count += tp16th;
+          int midi_note = 47 - m_quality_map[ m_quality ][ j ] + m_note_map[ m_root_note ] + midinote_offset;
 
-          midievent[0] = 0x80;     // store a note on command (MIDI channel 1)
-          outputfile.addEvent( track, tick_count, midievent );
+          midifile.addNoteOn(  track,          tick_count, track, midi_note, velocity );
+          midifile.addNoteOff( track, tick_count + tp16th, track, midi_note );
         }
       }
+      tick_count += tp16th;
     }
 
-    outputfile.sortTracks();
+    midifile.sortTracks();
+    midifile.joinTracks();
 
     std::time_t now = std::chrono::system_clock::to_time_t( std::chrono::system_clock::now() );
 
     char mbstr[100];
 
     if ( std::strftime(mbstr, sizeof( mbstr ), "%Y%m%d_%H%M%S", std::localtime( &now )) ) {
-      QString datestring{ mbstr };
 
-      qDebug() << "writing file " + QUrl( filename ).path();
-      outputfile.write( QUrl( filename ).path().toStdString() + ".mid" );
+      std::string path = QUrl( filename  ).path().toStdString();
+      if ( ! filename.endsWith( ".mid" ) )
+      {
+        path += ".mid";
+      }
+      midifile.write( path );
     }
   }
 
