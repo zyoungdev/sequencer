@@ -17,7 +17,8 @@ Page {
   onHeightChanged: onWidthChanged
 
   /* top controls */
-  Row {
+  GridLayout {
+    columns: 4
     anchors.bottom: padGrid.top;
     anchors.horizontalCenter: padGrid.horizontalCenter;
 
@@ -33,18 +34,19 @@ Page {
 
     /* tempo */
     SpinBox {
+      id: tempo
       value: engineModel.bpm
       editable: true
       stepSize: 1
       from: 30
       to: 300
 
-
       onValueModified: engineModel.bpm = value;
     }
 
     /* grid size */
     SpinBox {
+      id: gridSize
       value: padModel.padSize
       editable: true
       stepSize: 1
@@ -63,6 +65,7 @@ Page {
 
     /* clear */
     Button {
+      id: clearButton
       text: "Clear"
       onPressed: {
         engineModel.stop();
@@ -70,6 +73,28 @@ Page {
         playStop.isEngaged = false;
         padModel.clear();
       }
+    }
+
+    /* empty */
+    Rectangle {
+      Layout.minimumWidth: playStop.width
+    }
+
+    Label {
+      text: "bpm"
+      Layout.minimumWidth: tempo.width
+      horizontalAlignment: Text.AlignHCenter
+    }
+
+    Label {
+      text: "size"
+      Layout.minimumWidth: gridSize.width
+      horizontalAlignment: Text.AlignHCenter
+    }
+
+    /* empty */
+    Rectangle {
+      Layout.minimumWidth: clearButton.width
     }
   }
 
