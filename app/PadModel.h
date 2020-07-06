@@ -56,11 +56,11 @@ class PadModel : public QAbstractListModel
 {
   Q_OBJECT
 
-    Q_PROPERTY( int padSize READ padSize WRITE setPadSize NOTIFY padSizeChanged )
-    Q_PROPERTY( QString rootNote READ rootNote WRITE setRootNote NOTIFY rootNoteChanged )
-    Q_PROPERTY( QString quality READ quality WRITE setQuality NOTIFY qualityChanged )
+  Q_PROPERTY( int padSize READ padSize WRITE setPadSize NOTIFY padSizeChanged )
+  Q_PROPERTY( QString rootNote READ rootNote WRITE setRootNote NOTIFY rootNoteChanged )
+  Q_PROPERTY( QString quality READ quality WRITE setQuality NOTIFY qualityChanged )
 
-    static int PADSIZE;
+  static int PADSIZE;
   static constexpr int MAXPADSIZE = 16;
 
   /* List of Pad states */
