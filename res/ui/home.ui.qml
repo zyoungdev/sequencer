@@ -15,7 +15,7 @@ Page {
   onWidthChanged: resetRandomOptionsBoxPosition()
   onHeightChanged: onWidthChanged
 
-  /* controls */
+  /* top controls */
   Row {
     anchors.bottom: padGrid.top;
     anchors.horizontalCenter: padGrid.horizontalCenter;
@@ -245,6 +245,7 @@ Page {
     } // delegate
   } // GridView
 
+  /* bottom controls */
   Row {
     anchors.top: padGrid.bottom
     anchors.horizontalCenter: padGrid.horizontalCenter

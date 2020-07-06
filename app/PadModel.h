@@ -124,6 +124,7 @@ class PadModel : public QAbstractListModel
     "wav/B4.wav",
   };
 
+  /* Maps QString -> int */
   QMap<QString, int> m_note_map =
   {
     { "C" , 0 },
@@ -145,6 +146,7 @@ class PadModel : public QAbstractListModel
     { "B" , 11 }
   };
 
+  /* Maps QString -> List of chord notes */
   QMap<QString, QList<int>> m_quality_map =
   {
     // C  Db D  Eb E  F  Gb G  Ab A  Bb B
