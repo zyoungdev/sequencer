@@ -59,7 +59,10 @@ class PadModel : public QAbstractListModel
 
   Q_PROPERTY( int padSize READ padSize WRITE setPadSize NOTIFY padSizeChanged )
 
+  /* Current dimensions of the grid */
   int PADSIZE = 16;
+
+  /* Maximum supported dimensions of the grid */
   static constexpr int MAXPADSIZE = 16;
 
   /* List of Pad states */
@@ -67,6 +70,7 @@ class PadModel : public QAbstractListModel
 
   protected:
 
+  /* For using `PadModel` as a model for `GridLayout` */
   QHash<int, QByteArray> roleNames() const
   {
     QHash<int, QByteArray> roles;
@@ -80,21 +84,20 @@ class PadModel : public QAbstractListModel
 
   public:
 
+  /* For using `PadModel` as a model for `GridLayout` */
   enum PadRoles {
     IndexRole = Qt::UserRole + 1,
     EngagedRole,
     PlayingRole
   };
 
+  /* Constructur */
   PadModel( QObject *parent = 0 ) : QAbstractListModel( parent )
   {
     newGrid();
   }
 
-  ~PadModel()
-  {
-  }
-
+  /* Add a pad to the pool */
   void addPad( const Pad &pad )
   {
     beginInsertRows( QModelIndex(), rowCount(), rowCount() );
@@ -102,12 +105,14 @@ class PadModel : public QAbstractListModel
     endInsertRows();
   }
 
+  /* The number of pads */
   int rowCount( QModelIndex const& parent = QModelIndex() ) const
   {
     Q_UNUSED(parent);
     return m_pads.count();
   }
 
+  /* For retrieving values */
   QVariant data( QModelIndex const& index, int role = Qt::DisplayRole ) const
   {
     if (index.row() < 0 || index.row() >= m_pads.count())
@@ -133,10 +138,9 @@ class PadModel : public QAbstractListModel
     return QVariant();
   }
 
+  /* One tick */
   void update( int col )
   {
-    // qDebug() << "PadModel::update" << col;
-
     /* Play the sounds ASAP */
     std::vector<int> note_idxs;
     for (int i = 0 ; i < PADSIZE ; i += 1)
@@ -169,11 +173,13 @@ class PadModel : public QAbstractListModel
     }
   }
 
+  /* Get the grid size */
   int padSize()
   {
     return PADSIZE;
   }
 
+  /* Set the grid size */
   void setPadSize( int size )
   {
     PADSIZE = size;
@@ -183,6 +189,8 @@ class PadModel : public QAbstractListModel
 
   public slots:
 
+  /* Toggle a pad
+   * index is into the 1D m_pads array */
   void toggleEngaged( int index )
   {
     m_pads[ index ].toggleEngaged();
@@ -196,6 +204,7 @@ class PadModel : public QAbstractListModel
     emit dataChanged(i, i, { EngagedRole });
   }
 
+  /* Clear state of all pads */
   void clear()
   {
     for ( int i = 0 ; i < PADSIZE * PADSIZE ; i += 1 )
@@ -208,6 +217,7 @@ class PadModel : public QAbstractListModel
     }
   }
 
+  /* Create a new grid */
   void newGrid()
   {
     beginRemoveRows( QModelIndex(), 0, rowCount() );
@@ -222,6 +232,7 @@ class PadModel : public QAbstractListModel
     emit padSizeChanged( PADSIZE );
   }
 
+  /* Randomize the engaged pads */
   void random( QString pattern )
   {
     clear();
@@ -252,7 +263,9 @@ class PadModel : public QAbstractListModel
       QCoreApplication::processEvents();
     }
   }
+
   signals:
+
   void padSizeChanged( int size );
   void padEngaged( int index );
   void columnEngagedSignal( std::vector<int> notes );
