@@ -25,6 +25,7 @@ class Pad
   {
     return m_engaged;
   }
+
   bool playing() const
   {
     return m_playing;
@@ -60,7 +61,7 @@ class PadModel : public QAbstractListModel
   Q_PROPERTY( QString rootNote READ rootNote WRITE setRootNote NOTIFY rootNoteChanged )
   Q_PROPERTY( QString quality READ quality WRITE setQuality NOTIFY qualityChanged )
 
-  static int PADSIZE;
+  int PADSIZE = 16;
   static constexpr int MAXPADSIZE = 16;
 
   /* List of Pad states */
@@ -366,7 +367,7 @@ class PadModel : public QAbstractListModel
     }
   }
 
-  static int padSize()
+  int padSize()
   {
     return PADSIZE;
   }
