@@ -6,16 +6,14 @@ import QtQuick.Layouts 1.11
 import QtQuick.Controls.Material 2.12
 
 Page {
-
   function resetRandomOptionsBoxPosition() {
-    randomOptionsBox.x = 0
-    randomOptionsBox.y = 0
+    randomOptionsBox.x = page.width / 2 - randomOptionsBox.width / 2
+    randomOptionsBox.y = page.height / 2 - randomOptionsBox.height / 2
   }
 
-
   id: page
-  onWidthChanged:resetRandomOptionsBoxPosition()
-  onHeightChanged:resetRandomOptionsBoxPosition()
+  onWidthChanged: resetRandomOptionsBoxPosition()
+  onHeightChanged: onWidthChanged
 
   /* controls */
   Row {
@@ -252,24 +250,19 @@ Page {
     anchors.horizontalCenter: padGrid.horizontalCenter
     Button {
       text: "Random"
-      onClicked:
-      {
-        randomOptionsBox.visible = ! randomOptionsBox.visible
-        randomOptionsBoxShadow.visible = ! randomOptionsBoxShadow.visible
-      }
+      onClicked: randomOptionsBox.visible = ! randomOptionsBox.visible
     }
   }
 
-  /* Random Options */
+  /* Random Options Box */
   Rectangle {
     id: randomOptionsBox
-    // anchors.centerIn: parent
     visible: false
     width: 250
     height: 150
+    x: page.width / 2 - width / 2
+    y: page.height / 2 - height / 2
     color: "#ff303030"
-
-
 
     DragHandler { }
 
@@ -327,7 +320,7 @@ Page {
 
   DropShadow {
     id: randomOptionsBoxShadow
-    visible: false
+    visible: randomOptionsBox.visible
     anchors.fill: randomOptionsBox
     horizontalOffset: 3
     verticalOffset: 3
