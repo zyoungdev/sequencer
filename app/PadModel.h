@@ -254,6 +254,7 @@ class PadModel : public QAbstractListModel
 
     m_wavs.reserve( m_wav_filenames.size() );
 
+    /* Load wavs */
     for ( int i = 0 ; i < (int) m_wav_filenames.size() ; i++ )
     {
       auto m = Mix_LoadWAV( m_wav_filenames[ i ] );
@@ -379,7 +380,7 @@ class PadModel : public QAbstractListModel
     loadChord();
   }
 
-  QString rootNote()
+  QString& rootNote()
   {
     return m_root_note;
   }
