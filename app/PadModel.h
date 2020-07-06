@@ -460,6 +460,57 @@ class PadModel : public QAbstractListModel
     }
   }
 
+  void saveMidiFile( QString filename )
+  {
+    smf::MidiFile outputfile;
+    outputfile.absoluteTicks();
+    outputfile.addTrack(1);
+
+    std::vector<uchar> midievent;
+    midievent.resize(3);
+
+    int track = 1;
+    int tpq = 120; // ticks per quarter
+    int tp16th = tpq / 4; // ticks per sixteenth
+    int midinote_offset = 24;
+    int tick_count = 0;
+
+    outputfile.setTicksPerQuarterNote(tpq);
+
+    midievent[2] = 100; // velocity, 0 <= v <= 127
+    std::vector<std::vector<int>> all_cols;
+    for ( int i = 0 ; i < PADSIZE ; i += 1 ) // for each column
+    {
+      std::vector<int> pads;
+      for ( int j = 0 ; j < PADSIZE ; j += 1 ) // for each pad
+      {
+        int note_idx = i + j * PADSIZE;
+        if ( m_pads[ note_idx ].engaged() )
+        {
+          midievent[0] = 0x90;
+          midievent[1] = note_idx + midinote_offset;
+          outputfile.addEvent( track, tick_count, midievent );
+          tick_count += tp16th;
+
+          midievent[0] = 0x80;     // store a note on command (MIDI channel 1)
+          outputfile.addEvent( track, tick_count, midievent );
+        }
+      }
+    }
+
+    outputfile.sortTracks();
+
+    std::time_t now = std::chrono::system_clock::to_time_t( std::chrono::system_clock::now() );
+
+    char mbstr[100];
+
+    if ( std::strftime(mbstr, sizeof( mbstr ), "%Y%m%d_%H%M%S", std::localtime( &now )) ) {
+      QString datestring{ mbstr };
+
+      qDebug() << "writing file " + QUrl( filename ).path();
+      outputfile.write( QUrl( filename ).path().toStdString() + ".mid" );
+    }
+  }
 
   signals:
   void padSizeChanged( int size );

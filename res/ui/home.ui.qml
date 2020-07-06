@@ -4,6 +4,7 @@ import QtQuick.Controls 2.2
 import QtGraphicalEffects 1.12 // RadialGradient
 import QtQuick.Layouts 1.11
 import QtQuick.Controls.Material 2.12
+import Qt.labs.platform 1.1
 
 Page {
   function resetRandomOptionsBoxPosition() {
@@ -141,8 +142,13 @@ Page {
         }
       }
     }
+    Button {
+      text: "Save as midi"
+      onClicked: fileDialog.open()
+    }
   }
 
+  /* pads */
   GridView {
     /* data */
     id: padGrid
@@ -330,5 +336,21 @@ Page {
     samples: 25
     color: "#80000000"
     source: randomOptionsBox
+  }
+
+  FileDialog {
+    id: fileDialog
+    title: "Please choose a file"
+    // folder: shortcuts.home
+    folder: StandardPaths.writableLocation( StandardPaths.HomeLocation )
+    fileMode: FileDialog.SaveFile
+    visible: false
+    onAccepted: {
+      padModel.saveMidiFile( fileDialog.file );
+      visible = false;
+    }
+    onRejected: {
+      visible = false;
+    }
   }
 }

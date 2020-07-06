@@ -5,7 +5,7 @@
 #include <QCoreApplication>
 #include <QDateTime>
 #include <QDebug>
-#include <QGuiApplication>
+#include <QApplication>
 #include <QListView>
 #include <QMultimedia>
 #include <QObject>
@@ -29,6 +29,7 @@
 #include <memory>
 #include <vector>
 #include <random>
+#include <chrono>
 
 #include "lib/midifile/include/MidiFile.h"
 
