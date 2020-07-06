@@ -3,7 +3,8 @@
 int main( int argc, char *argv[] )
 {
   PadModel padModel;
-  EngineModel engineModel{ &padModel };
+  Piano piano;
+  EngineModel engineModel{ &padModel, &piano };
 
   QCoreApplication::setAttribute( Qt::AA_EnableHighDpiScaling );
 

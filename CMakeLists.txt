@@ -58,6 +58,7 @@ set(
     app/EngineModel.h
     app/PadModel.h
     app/PadModel.cpp
+    app/Piano.h
     app/main.h
     app/main.cpp
 

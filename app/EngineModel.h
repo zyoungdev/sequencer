@@ -3,6 +3,7 @@
 
 #include "include.h"
 #include "PadModel.h"
+#include "Piano.h"
 #include "Clock.h"
 
 class EngineModel : public QObject
@@ -13,18 +14,25 @@ class EngineModel : public QObject
 
   Clock m_clock{};
   PadModel* m_pad_model = nullptr;
+  Piano* m_piano = nullptr;
 
   bool m_is_running = false;
 
   public:
-  EngineModel( PadModel* padModel )
-    : m_pad_model( padModel )
+  EngineModel( PadModel* padModel, Piano* piano )
+    : m_pad_model( padModel ), m_piano( piano )
   {
     registerUpdate( this );
     registerUpdate( &m_clock );
 
     QObject::connect( m_pad_model, &PadModel::padSizeChanged,
-                      &m_clock, &Clock::setNumBeats );
+                      &m_clock,    &Clock::setNumBeats );
+    QObject::connect( m_pad_model, &PadModel::columnEngagedSignal,
+                      m_piano,     QOverload<std::vector<int>>::of( &Piano::play ) );
+    QObject::connect( m_pad_model, &PadModel::padEngaged,
+                      m_piano,     QOverload<int>::of( &Piano::play ) );
+    QObject::connect( m_pad_model, &PadModel::padSizeChanged,
+                      m_piano,     &Piano::setPadSize );
   }
 
   template <typename T>
