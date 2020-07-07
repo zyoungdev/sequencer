@@ -371,7 +371,7 @@ Page {
     fileMode: FileDialog.SaveFile
     visible: false
     onAccepted: {
-      padModel.saveMidiFile( fileDialog.file );
+      engineModel.saveMidiFile( fileDialog.file );
       visible = false;
     }
     onRejected: {

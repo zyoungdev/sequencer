@@ -59,11 +59,13 @@ class PadModel : public QAbstractListModel
 
   Q_PROPERTY( int padSize READ padSize WRITE setPadSize NOTIFY padSizeChanged )
 
-  /* Current dimensions of the grid */
-  int PADSIZE = 16;
+  /* Current height of the grid */
+  int GRID_H = 16;
+  /* Current width of the grid */
+  int GRID_W = 16;
 
   /* Maximum supported dimensions of the grid */
-  static constexpr int MAXPADSIZE = 16;
+  static constexpr int MAXGRID_H = 16;
 
   /* List of Pad states */
   QList<Pad> m_pads;
@@ -143,21 +145,21 @@ class PadModel : public QAbstractListModel
   {
     /* Play the sounds ASAP */
     std::vector<int> note_idxs;
-    for (int i = 0 ; i < PADSIZE ; i += 1)
+    for (int i = 0 ; i < GRID_W ; i += 1)
     {
-      if ( m_pads[ col + i * PADSIZE ].engaged() )
+      if ( m_pads[ col + i * GRID_W ].engaged() )
       {
         note_idxs.push_back( i );
       }
     }
     emit columnEngagedSignal( note_idxs );
 
-    int prev_col = col == 0 ? PADSIZE - 1 : col - 1;
-    for ( int i = 0 ; i < PADSIZE ; i += 1 )
+    int prev_col = col == 0 ? GRID_W - 1 : col - 1;
+    for ( int i = 0 ; i < GRID_W ; i += 1 )
     {
       /* Setup current column */
       {
-        QModelIndex idx = createIndex( col + i * PADSIZE, 0 );
+        QModelIndex idx = createIndex( col + i * GRID_W, 0 );
         Pad& pad = m_pads[ idx.row() ];
 
         pad.setPlaying( true );
@@ -166,9 +168,9 @@ class PadModel : public QAbstractListModel
 
       /* Clear previous column */
       {
-        QModelIndex idx = createIndex( prev_col + i * PADSIZE, 0 );
+        QModelIndex idx = createIndex( prev_col + i * GRID_W, 0 );
         m_pads[ idx.row() ].setPlaying( false );
-        emit dataChanged(idx, idx, { PlayingRole });
+        emit dataChanged( idx, idx, { PlayingRole } );
       }
     }
   }
@@ -176,15 +178,15 @@ class PadModel : public QAbstractListModel
   /* Get the grid size */
   int padSize()
   {
-    return PADSIZE;
+    return GRID_H;
   }
 
   /* Set the grid size */
   void setPadSize( int size )
   {
-    PADSIZE = size;
+    GRID_H = size;
 
-    emit padSizeChanged( PADSIZE );
+    emit padSizeChanged( GRID_H );
   }
 
   public slots:
@@ -198,7 +200,7 @@ class PadModel : public QAbstractListModel
     if ( m_pads[ index ].engaged() )
     {
       /* Send an index into the column */
-      emit padEngaged( index / PADSIZE );
+      emit padEngaged( index / GRID_W );
     }
 
     QModelIndex i = createIndex( index, 0 );
@@ -213,13 +215,13 @@ class PadModel : public QAbstractListModel
   /* Clear state of all pads */
   void clear()
   {
-    for ( int i = 0 ; i < PADSIZE * PADSIZE ; i += 1 )
+    for ( int i = 0 ; i < GRID_W * GRID_H ; i += 1 )
     {
       QModelIndex idx = createIndex( i, 0 );
 
       m_pads[ idx.row() ].reset();
 
-      emit dataChanged(idx, idx, { EngagedRole, PlayingRole });
+      emit dataChanged( idx, idx, { EngagedRole, PlayingRole } );
     }
   }
 
@@ -230,12 +232,12 @@ class PadModel : public QAbstractListModel
     m_pads.clear();
     endRemoveRows();
 
-    for (int i = 0 ; i < (PADSIZE * PADSIZE) ; i++ )
+    for (int i = 0 ; i < GRID_W * GRID_H ; i++ )
     {
       addPad( Pad( i ) );
     }
 
-    emit padSizeChanged( PADSIZE );
+    emit padSizeChanged( GRID_H );
   }
 
   /* Randomize the engaged pads */
@@ -245,14 +247,14 @@ class PadModel : public QAbstractListModel
 
     static std::random_device rd;
     static std::mt19937 gen(rd());
-    std::uniform_int_distribution<> distrib( 0, PADSIZE - 1 );
+    std::uniform_int_distribution<> distrib( 0, GRID_H - 1 );
 
-    for ( int i = 0 ; i < PADSIZE ; i += 1 )
+    for ( int i = 0 ; i < GRID_H ; i += 1 )
     {
       int numToToggle = pattern[ i % pattern.count() ].digitValue();
-      numToToggle = numToToggle > PADSIZE ? PADSIZE : numToToggle;
+      numToToggle = numToToggle > GRID_H ? GRID_H : numToToggle;
 
-      std::vector<bool> isSet( PADSIZE, false );
+      std::vector<bool> isSet( GRID_H, false );
 
       for ( int j = 0 ; j < numToToggle ; j += 1 )
       {
@@ -264,7 +266,7 @@ class PadModel : public QAbstractListModel
 
         isSet[ newInt ] = true;
 
-        toggleEngaged( i + newInt * PADSIZE );
+        toggleEngaged( i + newInt * GRID_W );
       }
       QCoreApplication::processEvents();
     }
