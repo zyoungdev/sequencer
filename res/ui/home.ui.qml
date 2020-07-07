@@ -209,7 +209,7 @@ Page {
         padModel.toggleEngaged( ( i + j * padModel.gridWidth ) % ( padModel.gridWidth * padModel.gridHeight ), true );
       }
       onWheel: {
-        avgdelta += wheel.pixelDelta.x
+        avgdelta += wheel.pixelDelta.x - wheel.pixelDelta.y
         avgdelta = avgdelta > 10 ? 10 : avgdelta;
         avgdelta = avgdelta < -10 ? -10 : avgdelta;
 
