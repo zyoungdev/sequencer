@@ -197,12 +197,9 @@ Page {
       } // Item
     } // delegate
 
-    DragHandler {
-      yAxis.enabled: false
-    }
-
     MouseArea {
-      anchors.fill: parent
+      property int avgdelta
+      anchors.fill: padGrid
       onClicked: {
         /* Use the GridView dimensions and content position to index into grid */
         var i = parseInt( ( mouseX + padGrid.contentX ) / padGrid.cellWidth );
@@ -211,8 +208,33 @@ Page {
         /* Clamp to number of pads to avoid segfault */
         padModel.toggleEngaged( ( i + j * padModel.gridWidth ) % ( padModel.gridWidth * padModel.gridHeight ), true );
       }
-    }
+      onWheel: {
+        avgdelta += wheel.pixelDelta.x
+        avgdelta = avgdelta > 10 ? 10 : avgdelta;
+        avgdelta = avgdelta < -10 ? -10 : avgdelta;
 
+        if ( avgdelta > 0 ) // moving hand left
+        {
+          if ( (padGrid.contentX + page.width) >= padGrid.width )
+          {
+            padGrid.contentX = padGrid.width - page.width
+          }
+          else {
+            padGrid.contentX += wheel.pixelDelta.x / 2
+          }
+        }
+        else // moving hand right
+        {
+          if ( padGrid.contentX <= 0 )
+          {
+            padGrid.contentX = 0
+          }
+          else {
+            padGrid.contentX += wheel.pixelDelta.x / 2
+          }
+        }
+      }
+    }
   } // GridView
 
   /* bottom controls */
