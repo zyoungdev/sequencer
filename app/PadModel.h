@@ -60,7 +60,7 @@ class PadModel : public QAbstractListModel
   Q_PROPERTY( int gridWidth READ gridWidth WRITE setGridWidth NOTIFY gridWidthChanged )
   Q_PROPERTY( int gridHeight READ gridHeight WRITE setGridHeight NOTIFY gridHeightChanged )
 
-  int GRID_W = 64;
+  int GRID_W = 32;
   int GRID_H = 16;
 
   /* Whether to animate the engaged pads */
@@ -204,6 +204,7 @@ class PadModel : public QAbstractListModel
     GRID_W = w;
 
     emit gridWidthChanged( GRID_W );
+    newGrid();
   }
 
   /* Set the grid size */
@@ -212,6 +213,7 @@ class PadModel : public QAbstractListModel
     GRID_H = h;
 
     emit gridHeightChanged( GRID_H );
+    newGrid();
   }
 
   public slots:

@@ -58,7 +58,6 @@ Page {
 
         playStop.isEngaged = false;
         padModel.gridHeight = value;
-        padModel.newGrid();
       }
     }
 
@@ -76,7 +75,6 @@ Page {
 
         playStop.isEngaged = false;
         padModel.gridWidth = value;
-        padModel.newGrid();
       }
     }
 
