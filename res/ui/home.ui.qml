@@ -6,6 +6,7 @@ import QtQuick.Layouts 1.15
 import QtQuick.Controls.Material 2.12
 import Qt.labs.platform 1.1
 
+
 Page {
   function resetRandomOptionsBoxPosition() {
     randomOptionsBox.x = page.width / 2 - randomOptionsBox.width / 2
@@ -145,41 +146,35 @@ Page {
         height: padGrid.cellHeight
         width: height
 
-        // Rectangle {
-        // anchors.fill: parent
-        // color: "#220000ff"
-        // }
-
-        Button {
+        Rectangle {
           // required property int index
           // required property bool engaged
           // required property bool playing
 
           /* data */
           id: delegate
-          highlighted: engaged
 
           /* anchors */
           anchors.centerIn: parent
           anchors.fill: parent
-          background.anchors.centerIn: delegate
 
-          /* make actual square */
-          background.height: padGrid.cellHeight - 2
-          background.width: padGrid.cellHeight - 12
+          color: "#00000000"
 
-          /* visual */
+          Rectangle {
+            id: bg
+            anchors.centerIn: parent
+            height: parent.height - 3
+            width: height
+            radius: 3
+            color: engaged ? playing ? '#d0ff7752' : '#80ffffff' : '#20ffffff'
+          }
 
-          onClicked: {
-          // onPressed: {
-            padModel.toggleEngaged( index, true );
-
-            // background.height = background.width
-            // background.width = padGrid.cellHeight - 12
-            // console.log( background.width + " " + background.height );
-
-            // padBlink.duration = engineModel.beatDuration()
-            // console.log( "*** clicked "  + index + " " + engaged + " " + playing );
+          MouseArea {
+            id: ma
+            anchors.fill: parent
+            onClicked: {
+              padModel.toggleEngaged( index, true )
+            }
           }
 
           Rectangle {
@@ -201,23 +196,10 @@ Page {
               id: padGradient
               anchors.fill: parent
               gradient: Gradient {
-                GradientStop { position: 0.0; color: "#ffffffff" }
+                GradientStop { position: 0.0; color: "#80ffffff" }
                 GradientStop { position: 0.5; color: "#00ffffff" }
               }
             }
-
-            // states: State {
-            // when: playing
-            // PropertyChanges { target: playingRect; opacity: 0 }
-            // }
-
-            // transitions: Transition {
-            // id: padBlink
-            // PropertyAnimation {
-            // properties: "opacity";
-            // easing.type: Easing.InCubic
-            // }
-            // }
           } // Rectangle
         } // Button
       } // Item

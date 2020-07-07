@@ -64,7 +64,7 @@ class PadModel : public QAbstractListModel
   int GRID_H = 16;
 
   /* Whether to animate the engaged pads */
-  static constexpr bool LIGHTUPPADS = false;
+  static constexpr bool LIGHTUPPADS = true;
 
   /* Maximum supported dimensions of the grid */
   static constexpr int MAXGRID_H = 16;
