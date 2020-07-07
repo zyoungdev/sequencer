@@ -67,7 +67,7 @@ Page {
       value: clock.bpm
       editable: true
       stepSize: 1
-      from: 30
+      from: 1
       to: 300
 
       onValueModified: clock.bpm = value;
