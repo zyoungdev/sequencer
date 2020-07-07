@@ -23,6 +23,34 @@ Page {
     anchors.bottom: padGrid.top;
     anchors.horizontalCenter: parent.horizontalCenter;
 
+    /* empty */
+    Rectangle {
+      Layout.minimumWidth: playStop.width
+    }
+
+    Label {
+      text: "bpm"
+      Layout.minimumWidth: tempo.width
+      horizontalAlignment: Text.AlignHCenter
+    }
+
+    Label {
+      text: "height"
+      Layout.minimumWidth: gridHeight.width
+      horizontalAlignment: Text.AlignHCenter
+    }
+
+    Label {
+      text: "width"
+      Layout.minimumWidth: gridWidth.width
+      horizontalAlignment: Text.AlignHCenter
+    }
+
+    /* empty */
+    Rectangle {
+      Layout.minimumWidth: clearButton.width
+    }
+
     /* play/stop */
     Button {
       id: playStop
@@ -89,34 +117,6 @@ Page {
         playStop.isEngaged = false;
         padModel.clear();
       }
-    }
-
-    /* empty */
-    Rectangle {
-      Layout.minimumWidth: playStop.width
-    }
-
-    Label {
-      text: "bpm"
-      Layout.minimumWidth: tempo.width
-      horizontalAlignment: Text.AlignHCenter
-    }
-
-    Label {
-      text: "height"
-      Layout.minimumWidth: gridHeight.width
-      horizontalAlignment: Text.AlignHCenter
-    }
-
-    Label {
-      text: "width"
-      Layout.minimumWidth: gridWidth.width
-      horizontalAlignment: Text.AlignHCenter
-    }
-
-    /* empty */
-    Rectangle {
-      Layout.minimumWidth: clearButton.width
     }
   }
 
