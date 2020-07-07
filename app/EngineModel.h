@@ -95,6 +95,45 @@ class EngineModel : public QObject
     m_piano->setQuality( quality );
   }
 
+  /* Save the pattern to file */
+  void saveMidiFile( QString filename )
+  {
+    int track      = 1;
+    int tpq        = 120;     // ticks per quarter
+    int tp16th     = tpq / 4; // ticks per sixteenth
+    int velocity   = 100;
+    int tick_count = 0;
+
+    smf::MidiFile midifile;
+    midifile.absoluteTicks();
+    midifile.addTrack( track );
+    midifile.setTicksPerQuarterNote( tpq );
+
+    for ( int i = 0 ; i < m_pad_model->padSize() ; i += 1 ) // for each column
+    {
+      for ( int j = 0 ; j < m_pad_model->padSize() ; j += 1 ) // for each pad
+      {
+        int pad_idx = i + j * m_pad_model->padSize();
+        if ( m_pad_model->isEngaged( pad_idx ) )
+        {
+          int midi_note = m_piano->getMidiNote( j );
+
+          midifile.addNoteOn(  track,          tick_count, track, midi_note, velocity );
+          midifile.addNoteOff( track, tick_count + tp16th, track, midi_note );
+        }
+      }
+      tick_count += tp16th;
+    }
+
+    midifile.sortTracks();
+    midifile.joinTracks();
+
+    std::string path = QUrl( filename  ).path().toStdString();
+    path += filename.endsWith( ".mid" ) ? "" : ".mid";
+    midifile.write( path );
+  }
+
+
   signals:
 
   void bpmChanged();

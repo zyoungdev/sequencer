@@ -205,6 +205,11 @@ class PadModel : public QAbstractListModel
     emit dataChanged(i, i, { EngagedRole });
   }
 
+  bool isEngaged( int index )
+  {
+    return m_pads[ index ].engaged();
+  }
+
   /* Clear state of all pads */
   void clear()
   {

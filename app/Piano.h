@@ -10,6 +10,9 @@ struct Piano : public QObject
   /* The maximum number of notes in the column */
   static constexpr int MAXCHORDSIZE = 16;
 
+  /* Offset between array index and midi note definition */
+  static constexpr int midinote_offset = 24;
+
   /* Cache of wav files */
   std::vector<Mix_Chunk*> m_wavs;
 
@@ -294,48 +297,13 @@ struct Piano : public QObject
     loadChord();
   }
 
-  public slots:
-
-  /* Save the pattern to file */
-  /*
-  void saveMidiFile( QString filename )
+  /* Return the midi note of the indexed note */
+  int getMidiNote( int index )
   {
-    int track = 1;
-    int tpq = 120; // ticks per quarter
-    int tp16th = tpq / 4; // ticks per sixteenth
-    int midinote_offset = 24;
-    int velocity = 100;
-    int tick_count = 0;
-
-    smf::MidiFile midifile;
-    midifile.absoluteTicks();
-    midifile.addTrack( track );
-    midifile.setTicksPerQuarterNote( tpq );
-
-    for ( int i = 0 ; i < PADSIZE ; i += 1 ) // for each column
-    {
-      for ( int j = 0 ; j < PADSIZE ; j += 1 ) // for each pad
-      {
-        int pad_idx = i + j * PADSIZE;
-        if ( m_pads[ pad_idx ].engaged() )
-        {
-          int midi_note = 47 - m_quality_map[ m_quality ][ j ] + m_note_map[ m_root_note ] + midinote_offset;
-
-          midifile.addNoteOn(  track,          tick_count, track, midi_note, velocity );
-          midifile.addNoteOff( track, tick_count + tp16th, track, midi_note );
-        }
-      }
-      tick_count += tp16th;
-    }
-
-    midifile.sortTracks();
-    midifile.joinTracks();
-
-    std::string path = QUrl( filename  ).path().toStdString();
-    path += filename.endsWith( ".mid" ) ? "" : ".mid";
-    midifile.write( path );
+    return (m_wavs.size() - 1) - m_quality_map[ m_quality ][ index ] + m_note_map[ m_root_note ] + midinote_offset;
   }
-  */
+
+  public slots:
 
   signals:
 
