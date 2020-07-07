@@ -7,8 +7,8 @@ struct Piano : public QObject
 {
   Q_OBJECT
 
-  int PADSIZE = 16;
-  static constexpr int MAXPADSIZE = 16;
+  /* The maximum number of notes in the column */
+  static constexpr int MAXCHORDSIZE = 16;
 
   /* Cache of wav files */
   std::vector<Mix_Chunk*> m_wavs;
@@ -66,6 +66,19 @@ struct Piano : public QObject
     "wav/A4.wav",
     "wav/Bb4.wav",
     "wav/B4.wav",
+
+    "wav/C5.wav",
+    "wav/Db5.wav",
+    "wav/D5.wav",
+    "wav/Eb5.wav",
+    "wav/E5.wav",
+    "wav/F5.wav",
+    "wav/Gb5.wav",
+    "wav/G5.wav",
+    "wav/Ab5.wav",
+    "wav/A5.wav",
+    "wav/Bb5.wav",
+    "wav/B5.wav",
   };
 
   /* Maps QString -> int */
@@ -135,31 +148,44 @@ struct Piano : public QObject
     { "min" ,      { 0, 3, 5, 7,  12, 15, 17, 19, 24, 26, 27, 29, 31, 32, 34, 36 } }
   };
 
+  /* Current root note */
   QString m_root_note = "C";
+
+  /* Current chord quality */
   QString m_quality = "Maj7";
 
-  QList<int> m_chord;
+  /* Current chord notes */
+  std::vector<int> m_chord;
 
+  /* Load the note indexes of the chord */
   void loadChord()
   {
     m_chord.clear();
-    m_chord.reserve( MAXPADSIZE );
+    m_chord.reserve( MAXCHORDSIZE );
 
-    QList<int> const& quality = m_quality_map[ m_quality ];
-    int root                  = m_note_map[ m_root_note ];
+    QList<int> quality = m_quality_map[ m_quality ];
+    int root           = m_note_map[ m_root_note ];
 
     int a = 0;
-    int b = PADSIZE - 1;
+    int b = MAXCHORDSIZE - 1;
+
+    for ( auto& q : quality )
+    {
+      q = q % m_wavs.size();
+    }
+
+    std::sort( quality.begin(), quality.end() );
 
     for ( int i = b ; i >= a ; i -= 1 )
     {
       int q = quality[ i ] + root;
-      m_chord.push_back( q );
+      m_chord.push_back( q % m_wavs.size() );
     }
   }
 
   public:
 
+  /* Constructor */
   Piano()
   {
     // Initialize SDL
@@ -177,7 +203,7 @@ struct Piano : public QObject
     /* maximum volume on all channels */
     Mix_Volume( -1, 128 );
     /* set number of simultaneous wavs */
-    Mix_AllocateChannels( PADSIZE * PADSIZE * PADSIZE );
+    Mix_AllocateChannels( MAXCHORDSIZE * MAXCHORDSIZE * MAXCHORDSIZE );
 
     m_wavs.reserve( m_wav_filenames.size() );
 
@@ -187,16 +213,17 @@ struct Piano : public QObject
       auto m = Mix_LoadWAV( m_wav_filenames[ i ] );
       if ( ! m )
       {
-        qDebug() << "[mix load mus] " << Mix_GetError();
+        qDebug() << "[mix load waav] " << Mix_GetError()
+          << m_wav_filenames[ i ];
       }
 
       m_wavs.push_back( m );
     }
 
-    // newGrid();
     loadChord();
   }
 
+  /* Destructor */
   ~Piano()
   {
     for ( Mix_Chunk* chunk_ptr : m_wavs )
@@ -208,10 +235,9 @@ struct Piano : public QObject
     SDL_Quit();
   }
 
+  /* Play the note indices into m_chord */
   void play( std::vector<int> note_idxs )
   {
-    // qDebug() << "Piano::update" << col;
-
     /* Play the sounds ASAP */
     for (int i = 0 ; i < (int) note_idxs.size() ; i += 1)
     {
@@ -222,42 +248,46 @@ struct Piano : public QObject
     }
   }
 
-  void play( int padNum )
+  /* Play a single note. `index` is into m_chord. */
+  void play( int index )
   {
-    qDebug() << padNum;
-    if ( Mix_PlayChannel( -1, m_wavs[ m_chord[ padNum / PADSIZE ] ], 0 ) == -1 )
+    qDebug() << index << "note";
+    for ( auto const& c : m_chord ) 
+      qDebug() << c;
+
+
+    if ( Mix_PlayChannel( -1, m_wavs[ m_chord[ index ] ], 0 ) == -1 )
     {
       qDebug() << Mix_GetError();
     }
   }
 
-  int padSize()
+  /* Get the number of notes supported */
+  int chordSize()
   {
-    return PADSIZE;
+    return MAXCHORDSIZE;
   }
 
-  void setPadSize( int size )
-  {
-    PADSIZE = size;
-    loadChord();
-  }
-
+  /* Get the current chord quality */
   QString quality()
   {
     return m_quality;
   }
 
+  /* Set the current chord quality */
   void setQuality( QString quality )
   {
     m_quality = quality;
     loadChord();
   }
 
+  /* Get the current root note */
   QString& rootNote()
   {
     return m_root_note;
   }
 
+  /* Set the current root note */
   void setRootNote( QString root )
   {
     m_root_note = root;

@@ -197,7 +197,8 @@ class PadModel : public QAbstractListModel
 
     if ( m_pads[ index ].engaged() )
     {
-      emit padEngaged( index );
+      /* Send an index into the column */
+      emit padEngaged( index / PADSIZE );
     }
 
     QModelIndex i = createIndex( index, 0 );

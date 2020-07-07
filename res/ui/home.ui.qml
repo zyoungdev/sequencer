@@ -124,7 +124,7 @@ Page {
           engineModel.stop();
         }
 
-        padModel.rootNote = currentValue;
+        engineModel.setRootNote( currentValue );
 
         if ( wasRunning )
         {
@@ -159,7 +159,7 @@ Page {
           engineModel.stop();
         }
 
-        padModel.quality = currentValue;
+        engineModel.setQuality( currentValue );
 
         if ( wasRunning )
         {

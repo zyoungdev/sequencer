@@ -31,8 +31,6 @@ class EngineModel : public QObject
                       m_piano,     QOverload<std::vector<int>>::of( &Piano::play ) );
     QObject::connect( m_pad_model, &PadModel::padEngaged,
                       m_piano,     QOverload<int>::of( &Piano::play ) );
-    QObject::connect( m_pad_model, &PadModel::padSizeChanged,
-                      m_piano,     &Piano::setPadSize );
   }
 
   template <typename T>
@@ -85,6 +83,16 @@ class EngineModel : public QObject
   int beatDuration()
   {
     return m_clock.getInterval();
+  }
+
+  void setRootNote( QString root )
+  {
+    m_piano->setRootNote( root );
+  }
+
+  void setQuality( QString quality )
+  {
+    m_piano->setQuality( quality );
   }
 
   signals:
