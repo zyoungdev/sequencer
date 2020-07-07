@@ -216,7 +216,7 @@ struct Piano : public QObject
       auto m = Mix_LoadWAV( m_wav_filenames[ i ] );
       if ( ! m )
       {
-        qDebug() << "[mix load waav] " << Mix_GetError()
+        qDebug() << "[mix load wav] " << Mix_GetError()
           << m_wav_filenames[ i ];
       }
 
@@ -254,11 +254,6 @@ struct Piano : public QObject
   /* Play a single note. `index` is into m_chord. */
   void play( int index )
   {
-    qDebug() << index << "note";
-    for ( auto const& c : m_chord ) 
-      qDebug() << c;
-
-
     if ( Mix_PlayChannel( -1, m_wavs[ m_chord[ index ] ], 0 ) == -1 )
     {
       qDebug() << Mix_GetError();
