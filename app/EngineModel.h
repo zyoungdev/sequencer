@@ -105,7 +105,7 @@ class EngineModel : public QObject
     midifile.addTrack( track );
     midifile.setTicksPerQuarterNote( tpq );
 
-    for ( int i = 0 ; i < m_pad_model->gridHeight() ; i += 1 ) // for each column
+    for ( int i = 0 ; i < m_pad_model->gridWidth() ; i += 1 ) // for each column
     {
       for ( int j = 0 ; j < m_pad_model->gridHeight() ; j += 1 ) // for each pad
       {
