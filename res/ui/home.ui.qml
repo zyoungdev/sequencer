@@ -134,7 +134,7 @@ Page {
 
     /* visual */
     height: Math.min( page.width, page.height  ) * 0.75
-    cellHeight: height / padModel.gridHeight
+    cellHeight: Math.min( height / padModel.gridHeight, 100 )
     cellWidth: cellHeight
     width: cellHeight * padModel.gridWidth
 
