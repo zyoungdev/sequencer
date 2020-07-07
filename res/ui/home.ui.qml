@@ -96,8 +96,8 @@ Page {
       value: padModel.gridWidth
       editable: true
       stepSize: 16
-      from: 1
-      to: 256
+      from: 0
+      to: 512
 
       onValueModified: {
         engineModel.stop();
@@ -200,7 +200,7 @@ Page {
     MouseArea {
       property int avgdelta
       anchors.fill: padGrid
-      onClicked: {
+      onPressed: {
         /* Use the GridView dimensions and content position to index into grid */
         var i = parseInt( ( mouseX + padGrid.contentX ) / padGrid.cellWidth );
         var j = parseInt( mouseY / padGrid.cellHeight );
