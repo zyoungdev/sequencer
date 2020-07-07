@@ -330,7 +330,7 @@ Page {
         id: randomPattern
         anchors.horizontalCenter: parent.horizontalCenter
         width: 175
-        text: "31103021"
+        text: "3001200030102101"
         horizontalAlignment: Qt.AlignHCenter
       }
 
