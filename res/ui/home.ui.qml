@@ -169,14 +169,6 @@ Page {
             color: engaged ? playing ? '#d0ff7752' : '#80ffffff' : '#20ffffff'
           }
 
-          MouseArea {
-            id: ma
-            anchors.fill: parent
-            onClicked: {
-              padModel.toggleEngaged( index, true )
-            }
-          }
-
           Rectangle {
             // required property bool playing
             // required property bool engaged
@@ -208,6 +200,19 @@ Page {
     DragHandler {
       yAxis.enabled: false
     }
+
+    MouseArea {
+      anchors.fill: parent
+      onClicked: {
+        /* Use the GridView dimensions and content position to index into grid */
+        var i = parseInt( ( mouseX + padGrid.contentX ) / padGrid.cellWidth );
+        var j = parseInt( mouseY / padGrid.cellHeight );
+
+        /* Clamp to number of pads to avoid segfault */
+        padModel.toggleEngaged( ( i + j * padModel.gridWidth ) % ( padModel.gridWidth * padModel.gridHeight ), true );
+      }
+    }
+
   } // GridView
 
   /* bottom controls */
