@@ -324,7 +324,7 @@ Page {
     x: padGrid.x - padGrid.contentX + 0 + padGrid.cellWidth * clock.beat
     y: padGrid.y
     width: padGrid.cellWidth
-    height: padGrid.height
+    height: padGrid.cellHeight * gridHeight.value
     color: '#22ffffff'
   }
 
