@@ -129,7 +129,7 @@ Page {
 
     /* anchors */
     anchors.verticalCenter: parent.verticalCenter
-    // anchors.centerIn: padGrid.x parent
+    x: contentX + width >= page.width ? 0 : page.width / 2 - padGrid.width / 2
 
     /* visual */
     height: Math.min( page.width, page.height  ) * 0.75
