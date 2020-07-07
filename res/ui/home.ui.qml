@@ -18,9 +18,9 @@ Page {
 
   /* top controls */
   GridLayout {
-    columns: 4
+    columns: 5
     anchors.bottom: padGrid.top;
-    anchors.horizontalCenter: padGrid.horizontalCenter;
+    anchors.horizontalCenter: parent.horizontalCenter;
 
     /* play/stop */
     Button {
@@ -35,18 +35,18 @@ Page {
     /* tempo */
     SpinBox {
       id: tempo
-      value: engineModel.bpm
+      value: clock.bpm
       editable: true
       stepSize: 1
       from: 30
       to: 300
 
-      onValueModified: engineModel.bpm = value;
+      onValueModified: clock.bpm = value;
     }
 
-    /* grid size */
+    /* grid height */
     SpinBox {
-      id: gridSize
+      id: gridHeight
       value: padModel.gridHeight
       editable: true
       stepSize: 1
@@ -58,6 +58,24 @@ Page {
 
         playStop.isEngaged = false;
         padModel.gridHeight = value;
+        padModel.newGrid();
+      }
+    }
+
+    /* grid width */
+    SpinBox {
+      id: gridWidth
+      value: padModel.gridWidth
+      editable: true
+      stepSize: 16
+      from: 1
+      to: 256
+
+      onValueModified: {
+        engineModel.stop();
+
+        playStop.isEngaged = false;
+        padModel.gridWidth = value;
         padModel.newGrid();
       }
     }
@@ -86,8 +104,14 @@ Page {
     }
 
     Label {
-      text: "size"
-      Layout.minimumWidth: gridSize.width
+      text: "height"
+      Layout.minimumWidth: gridHeight.width
+      horizontalAlignment: Text.AlignHCenter
+    }
+
+    Label {
+      text: "width"
+      Layout.minimumWidth: gridWidth.width
       horizontalAlignment: Text.AlignHCenter
     }
 
@@ -95,10 +119,6 @@ Page {
     Rectangle {
       Layout.minimumWidth: clearButton.width
     }
-  }
-
-  /* side controls */
-  Column {
   }
 
   /* pads */
@@ -110,7 +130,8 @@ Page {
     required model
 
     /* anchors */
-    anchors.centerIn: parent
+    anchors.verticalCenter: parent.verticalCenter
+    // anchors.centerIn: padGrid.x parent
 
     /* visual */
     height: Math.min( page.width, page.height  ) * 0.75
@@ -151,8 +172,9 @@ Page {
 
           /* visual */
 
-          onPressed: {
-            padModel.toggleEngaged( index );
+          onClicked: {
+          // onPressed: {
+            padModel.toggleEngaged( index, true );
 
             // background.height = background.width
             // background.width = padGrid.cellHeight - 12
@@ -211,7 +233,7 @@ Page {
   /* bottom controls */
   Row {
     anchors.top: padGrid.bottom
-    anchors.horizontalCenter: padGrid.horizontalCenter
+    anchors.horizontalCenter: parent.horizontalCenter
     spacing: 2
     Button {
       text: "Random"
@@ -289,6 +311,16 @@ Page {
     }
   }
 
+  /* Cursor */
+  Rectangle {
+    id: cursor
+    x: padGrid.x - padGrid.contentX + 0 + padGrid.cellWidth * clock.beat
+    y: padGrid.y
+    width: padGrid.cellWidth
+    height: padGrid.height
+    color: '#22ffffff'
+  }
+
   /* Random Options Box */
   Rectangle {
     id: randomOptionsBox
@@ -353,6 +385,7 @@ Page {
     }
   }
 
+  /* Options Box Shadow */
   DropShadow {
     id: randomOptionsBoxShadow
     visible: randomOptionsBox.visible
@@ -366,6 +399,7 @@ Page {
     source: randomOptionsBox
   }
 
+  /* For save as midi */
   FileDialog {
     id: fileDialog
     title: "Please choose a file"

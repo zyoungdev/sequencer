@@ -57,12 +57,14 @@ class PadModel : public QAbstractListModel
 {
   Q_OBJECT
 
-  int GRID_W = 16;
-  int GRID_H = 16;
-
   Q_PROPERTY( int gridWidth READ gridWidth WRITE setGridWidth NOTIFY gridWidthChanged )
   Q_PROPERTY( int gridHeight READ gridHeight WRITE setGridHeight NOTIFY gridHeightChanged )
 
+  int GRID_W = 64;
+  int GRID_H = 16;
+
+  /* Whether to animate the engaged pads */
+  static constexpr bool LIGHTUPPADS = false;
 
   /* Maximum supported dimensions of the grid */
   static constexpr int MAXGRID_H = 16;
@@ -154,28 +156,31 @@ class PadModel : public QAbstractListModel
     }
     emit columnEngagedSignal( note_idxs );
 
-    int prev_col = col == 0 ? GRID_W - 1 : col - 1;
-    for ( int i = 0 ; i < GRID_H ; i += 1 )
+    if ( LIGHTUPPADS )
     {
+      int prev_col = col == 0 ? GRID_W - 1 : col - 1;
+      for ( int i = 0 ; i < GRID_H ; i += 1 )
       {
-        QModelIndex idx = createIndex( col + i * GRID_W, 0 );
-        Pad& pad = m_pads[ idx.row() ];
-
-        if ( pad.engaged() )
         {
-          pad.setPlaying( true );
-          emit dataChanged( idx, idx, { PlayingRole } );
+          QModelIndex idx = createIndex( col + i * GRID_W, 0 );
+          Pad& pad = m_pads[ idx.row() ];
+
+          if ( pad.engaged() )
+          {
+            pad.setPlaying( true );
+            emit dataChanged( idx, idx, { PlayingRole } );
+          }
         }
-      }
 
-      {
-        QModelIndex idx = createIndex( prev_col + i * GRID_W, 0 );
-        Pad& pad = m_pads[ idx.row() ];
-
-        if ( pad.engaged() || pad.playing() )
         {
-          pad.setPlaying( false );
-          emit dataChanged( idx, idx, { PlayingRole } );
+          QModelIndex idx = createIndex( prev_col + i * GRID_W, 0 );
+          Pad& pad = m_pads[ idx.row() ];
+
+          if ( pad.engaged() || pad.playing() )
+          {
+            pad.setPlaying( false );
+            emit dataChanged( idx, idx, { PlayingRole } );
+          }
         }
       }
     }
@@ -213,11 +218,11 @@ class PadModel : public QAbstractListModel
 
   /* Toggle a pad
    * index is into the 1D m_pads array */
-  void toggleEngaged( int index )
+  void toggleEngaged( int index, bool doEmit )
   {
     m_pads[ index ].toggleEngaged();
 
-    if ( m_pads[ index ].engaged() )
+    if ( m_pads[ index ].engaged() && doEmit )
     {
       /* Send an index into the column */
       emit padEngaged( index / GRID_W );
@@ -287,7 +292,7 @@ class PadModel : public QAbstractListModel
 
         isSet[ newInt ] = true;
 
-        toggleEngaged( i + newInt * GRID_W );
+        toggleEngaged( i + newInt * GRID_W, false );
       }
       QCoreApplication::processEvents();
     }

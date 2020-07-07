@@ -10,53 +10,47 @@ class EngineModel : public QObject
 {
   Q_OBJECT
 
-  Q_PROPERTY( int bpm READ bpm WRITE setBpm NOTIFY bpmChanged )
-
-  Clock m_clock{};
+  /* Clock */
+  Clock* m_clock = nullptr;
+  /* Grid of pads */
   PadModel* m_pad_model = nullptr;
+  /* Piano sounds */
   Piano* m_piano = nullptr;
 
+  /* Engine is running */
   bool m_is_running = false;
 
   public:
-  EngineModel( PadModel* padModel, Piano* piano )
-    : m_pad_model( padModel ), m_piano( piano )
+
+  /* Constructor */
+  EngineModel( Clock* clock, PadModel* padModel, Piano* piano )
+    : m_clock( clock ), m_pad_model( padModel ), m_piano( piano )
   {
     registerUpdate( this );
-    registerUpdate( &m_clock );
+    registerUpdate( m_clock );
 
-    m_clock.setNumBeats( m_pad_model->gridWidth() );
+    m_clock->setNumBeats( m_pad_model->gridWidth() );
 
     QObject::connect( m_pad_model, &PadModel::gridWidthChanged,
-                      &m_clock,    &Clock::setNumBeats );
+                      m_clock,    &Clock::setNumBeats );
     QObject::connect( m_pad_model, &PadModel::columnEngagedSignal,
                       m_piano,     QOverload<std::vector<int>>::of( &Piano::play ) );
     QObject::connect( m_pad_model, &PadModel::padEngaged,
                       m_piano,     QOverload<int>::of( &Piano::play ) );
   }
 
+  /* Register object with clock */
   template <typename T>
   void registerUpdate( T const* obj )
   {
-    m_clock.registerUpdate( obj );
+    m_clock->registerUpdate( obj );
   }
 
+  /* Tick */
   void update()
   {
-    qDebug() << "\n*** EngineModel::update" << m_clock.m_bpm; 
-    m_pad_model->update( m_clock.beat() );
-  }
-
-  int bpm() const
-  {
-    return m_clock.m_bpm;
-  }
-
-  void setBpm( int bpm ) 
-  {
-    m_clock.setBpm( bpm );
-
-    emit bpmChanged();
+    // qDebug() << "\n*** EngineModel::update" << m_clock.m_bpm; 
+    m_pad_model->update( m_clock->beat() );
   }
 
   public slots:
@@ -68,7 +62,7 @@ class EngineModel : public QObject
 
   bool play( bool fromBeginning = true )
   {
-    m_clock.start( fromBeginning );
+    m_clock->start( fromBeginning );
     m_is_running = true;
 
     return true;
@@ -76,7 +70,7 @@ class EngineModel : public QObject
 
   bool stop()
   {
-    m_clock.stop();
+    m_clock->stop();
     m_is_running = false;
 
     return false;
@@ -84,7 +78,7 @@ class EngineModel : public QObject
 
   int beatDuration()
   {
-    return m_clock.getInterval();
+    return m_clock->getInterval();
   }
 
   void setRootNote( QString root )
@@ -134,7 +128,6 @@ class EngineModel : public QObject
     path += filename.endsWith( ".mid" ) ? "" : ".mid";
     midifile.write( path );
   }
-
 
   signals:
 
