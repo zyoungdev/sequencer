@@ -25,7 +25,9 @@ class EngineModel : public QObject
     registerUpdate( this );
     registerUpdate( &m_clock );
 
-    QObject::connect( m_pad_model, &PadModel::padSizeChanged,
+    m_clock.setNumBeats( m_pad_model->gridWidth() );
+
+    QObject::connect( m_pad_model, &PadModel::gridWidthChanged,
                       &m_clock,    &Clock::setNumBeats );
     QObject::connect( m_pad_model, &PadModel::columnEngagedSignal,
                       m_piano,     QOverload<std::vector<int>>::of( &Piano::play ) );
@@ -109,11 +111,11 @@ class EngineModel : public QObject
     midifile.addTrack( track );
     midifile.setTicksPerQuarterNote( tpq );
 
-    for ( int i = 0 ; i < m_pad_model->padSize() ; i += 1 ) // for each column
+    for ( int i = 0 ; i < m_pad_model->gridHeight() ; i += 1 ) // for each column
     {
-      for ( int j = 0 ; j < m_pad_model->padSize() ; j += 1 ) // for each pad
+      for ( int j = 0 ; j < m_pad_model->gridHeight() ; j += 1 ) // for each pad
       {
-        int pad_idx = i + j * m_pad_model->padSize();
+        int pad_idx = i + j * m_pad_model->gridHeight();
         if ( m_pad_model->isEngaged( pad_idx ) )
         {
           int midi_note = m_piano->getMidiNote( j );

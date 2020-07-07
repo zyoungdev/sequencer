@@ -47,7 +47,7 @@ Page {
     /* grid size */
     SpinBox {
       id: gridSize
-      value: padModel.padSize
+      value: padModel.gridHeight
       editable: true
       stepSize: 1
       from: 1
@@ -57,8 +57,7 @@ Page {
         engineModel.stop();
 
         playStop.isEngaged = false;
-        padModel.padSize = value;
-        // console.log( padModel.padSize );
+        padModel.gridHeight = value;
         padModel.newGrid();
       }
     }
@@ -100,77 +99,6 @@ Page {
 
   /* side controls */
   Column {
-    anchors.left: padGrid.right
-    anchors.verticalCenter: padGrid.verticalCenter
-    ComboBox {
-      model: ListModel {
-        ListElement { text: "C" }
-        ListElement { text: "Db" }
-        ListElement { text: "D" }
-        ListElement { text: "Eb" }
-        ListElement { text: "E" }
-        ListElement { text: "F" }
-        ListElement { text: "Gb" }
-        ListElement { text: "G" }
-        ListElement { text: "Ab" }
-        ListElement { text: "A" }
-        ListElement { text: "Bb" }
-        ListElement { text: "B" }
-      }
-      onActivated: {
-        var wasRunning = engineModel.isRunning();
-        if ( wasRunning )
-        {
-          engineModel.stop();
-        }
-
-        engineModel.setRootNote( currentValue );
-
-        if ( wasRunning )
-        {
-          engineModel.play( false );
-        }
-      }
-    }
-    ComboBox {
-      model: ListModel {
-        ListElement { text: "Maj7" }
-        ListElement { text: "Maj9" }
-        ListElement { text: "7" }
-        ListElement { text: "9" }
-        ListElement { text: "-7" }
-        ListElement { text: "+7" }
-        ListElement { text: "half dim" }
-        ListElement { text: "O" }
-        ListElement { text: "minMaj" }
-        ListElement { text: "Maj7#5" }
-        ListElement { text: "7#11" }
-        ListElement { text: "7#9" }
-        ListElement { text: "7#5#9" }
-        ListElement { text: "7b9" }
-        ListElement { text: "-9" }
-        ListElement { text: "-7b9" }
-        ListElement { text: "min" }
-      }
-      onActivated: {
-        var wasRunning = engineModel.isRunning();
-        if ( wasRunning )
-        {
-          engineModel.stop();
-        }
-
-        engineModel.setQuality( currentValue );
-
-        if ( wasRunning )
-        {
-          engineModel.play( false );
-        }
-      }
-    }
-    Button {
-      text: "Save as midi"
-      onClicked: fileDialog.open()
-    }
   }
 
   /* pads */
@@ -186,11 +114,11 @@ Page {
 
     /* visual */
     height: Math.min( page.width, page.height  ) * 0.75
-    width: height
-    cellHeight: height / padModel.padSize
+    cellHeight: height / padModel.gridHeight
     cellWidth: cellHeight
+    width: cellHeight * padModel.gridWidth
+
     interactive: false
-    Layout.minimumHeight: 700
 
     delegate: Component {
       Item {
@@ -274,15 +202,90 @@ Page {
         } // Button
       } // Item
     } // delegate
+
+    DragHandler {
+      yAxis.enabled: false
+    }
   } // GridView
 
   /* bottom controls */
   Row {
     anchors.top: padGrid.bottom
     anchors.horizontalCenter: padGrid.horizontalCenter
+    spacing: 2
     Button {
       text: "Random"
       onClicked: randomOptionsBox.visible = ! randomOptionsBox.visible
+    }
+
+    ComboBox {
+      model: ListModel {
+        ListElement { text: "C" }
+        ListElement { text: "Db" }
+        ListElement { text: "D" }
+        ListElement { text: "Eb" }
+        ListElement { text: "E" }
+        ListElement { text: "F" }
+        ListElement { text: "Gb" }
+        ListElement { text: "G" }
+        ListElement { text: "Ab" }
+        ListElement { text: "A" }
+        ListElement { text: "Bb" }
+        ListElement { text: "B" }
+      }
+      onActivated: {
+        var wasRunning = engineModel.isRunning();
+        if ( wasRunning )
+        {
+          engineModel.stop();
+        }
+
+        engineModel.setRootNote( currentValue );
+
+        if ( wasRunning )
+        {
+          engineModel.play( false );
+        }
+      }
+    }
+    ComboBox {
+      model: ListModel {
+        ListElement { text: "Maj7" }
+        ListElement { text: "Maj9" }
+        ListElement { text: "7" }
+        ListElement { text: "9" }
+        ListElement { text: "-7" }
+        ListElement { text: "+7" }
+        ListElement { text: "half dim" }
+        ListElement { text: "O" }
+        ListElement { text: "minMaj" }
+        ListElement { text: "Maj7#5" }
+        ListElement { text: "7#11" }
+        ListElement { text: "7#9" }
+        ListElement { text: "7#5#9" }
+        ListElement { text: "7b9" }
+        ListElement { text: "-9" }
+        ListElement { text: "-7b9" }
+        ListElement { text: "min" }
+      }
+      onActivated: {
+        var wasRunning = engineModel.isRunning();
+        if ( wasRunning )
+        {
+          engineModel.stop();
+        }
+
+        engineModel.setQuality( currentValue );
+
+        if ( wasRunning )
+        {
+          engineModel.play( false );
+        }
+      }
+    }
+    Button {
+      text: "Save as midi"
+      onClicked: fileDialog.open()
     }
   }
 
@@ -315,7 +318,7 @@ Page {
         id: randomPattern
         anchors.horizontalCenter: parent.horizontalCenter
         width: 175
-        text: "1212"
+        text: "31103021"
         horizontalAlignment: Qt.AlignHCenter
       }
 

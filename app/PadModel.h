@@ -5,7 +5,7 @@
 
 class Pad
 {
-  int m_index;
+  int m_index = 0;
   bool m_engaged = false;
   bool m_playing = false;
 
@@ -57,12 +57,12 @@ class PadModel : public QAbstractListModel
 {
   Q_OBJECT
 
-  Q_PROPERTY( int padSize READ padSize WRITE setPadSize NOTIFY padSizeChanged )
-
-  /* Current height of the grid */
-  int GRID_H = 16;
-  /* Current width of the grid */
   int GRID_W = 16;
+  int GRID_H = 16;
+
+  Q_PROPERTY( int gridWidth READ gridWidth WRITE setGridWidth NOTIFY gridWidthChanged )
+  Q_PROPERTY( int gridHeight READ gridHeight WRITE setGridHeight NOTIFY gridHeightChanged )
+
 
   /* Maximum supported dimensions of the grid */
   static constexpr int MAXGRID_H = 16;
@@ -145,7 +145,7 @@ class PadModel : public QAbstractListModel
   {
     /* Play the sounds ASAP */
     std::vector<int> note_idxs;
-    for (int i = 0 ; i < GRID_W ; i += 1)
+    for (int i = 0 ; i < GRID_H ; i += 1)
     {
       if ( m_pads[ col + i * GRID_W ].engaged() )
       {
@@ -155,38 +155,58 @@ class PadModel : public QAbstractListModel
     emit columnEngagedSignal( note_idxs );
 
     int prev_col = col == 0 ? GRID_W - 1 : col - 1;
-    for ( int i = 0 ; i < GRID_W ; i += 1 )
+    for ( int i = 0 ; i < GRID_H ; i += 1 )
     {
-      /* Setup current column */
       {
         QModelIndex idx = createIndex( col + i * GRID_W, 0 );
         Pad& pad = m_pads[ idx.row() ];
 
-        pad.setPlaying( true );
-        emit dataChanged( idx, idx, { PlayingRole } );
+        if ( pad.engaged() )
+        {
+          pad.setPlaying( true );
+          emit dataChanged( idx, idx, { PlayingRole } );
+        }
       }
 
-      /* Clear previous column */
       {
         QModelIndex idx = createIndex( prev_col + i * GRID_W, 0 );
-        m_pads[ idx.row() ].setPlaying( false );
-        emit dataChanged( idx, idx, { PlayingRole } );
+        Pad& pad = m_pads[ idx.row() ];
+
+        if ( pad.engaged() || pad.playing() )
+        {
+          pad.setPlaying( false );
+          emit dataChanged( idx, idx, { PlayingRole } );
+        }
       }
     }
   }
 
   /* Get the grid size */
-  int padSize()
+  int gridWidth()
+  {
+    return GRID_W;
+  }
+
+  /* Get the grid size */
+  int gridHeight()
   {
     return GRID_H;
   }
 
   /* Set the grid size */
-  void setPadSize( int size )
+  void setGridWidth( int w )
   {
-    GRID_H = size;
+    GRID_W = w;
 
-    emit padSizeChanged( GRID_H );
+    emit gridWidthChanged( GRID_W );
+  }
+
+  /* Set the grid size */
+  void setGridHeight( int h )
+  {
+    GRID_H = h;
+
+    emit gridHeightChanged( GRID_H );
   }
 
   public slots:
@@ -237,7 +257,8 @@ class PadModel : public QAbstractListModel
       addPad( Pad( i ) );
     }
 
-    emit padSizeChanged( GRID_H );
+    emit gridHeightChanged( GRID_H );
+    emit gridWidthChanged( GRID_W );
   }
 
   /* Randomize the engaged pads */
@@ -249,7 +270,7 @@ class PadModel : public QAbstractListModel
     static std::mt19937 gen(rd());
     std::uniform_int_distribution<> distrib( 0, GRID_H - 1 );
 
-    for ( int i = 0 ; i < GRID_H ; i += 1 )
+    for ( int i = 0 ; i < GRID_W ; i += 1 )
     {
       int numToToggle = pattern[ i % pattern.count() ].digitValue();
       numToToggle = numToToggle > GRID_H ? GRID_H : numToToggle;
@@ -274,7 +295,8 @@ class PadModel : public QAbstractListModel
 
   signals:
 
-  void padSizeChanged( int size );
+  void gridWidthChanged( int w );
+  void gridHeightChanged( int h );
   void padEngaged( int index );
   void columnEngagedSignal( std::vector<int> notes );
 };
