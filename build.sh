@@ -2,9 +2,9 @@
 
 src_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
-build_dir="sequencer_build"
+work_dir="/tmp"
+build_dir="$work_dir"/"sequencer_build"
 
-cd /tmp
 mkdir -p $build_dir
 cd $build_dir
 
