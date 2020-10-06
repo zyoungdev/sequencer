@@ -24,6 +24,7 @@ $ git clone --recurse-submodules https://github.com/zerovectorspace/sequencer
 $ mkdir sequencer_build
 $ cd sequencer_build
 $ cmake ../sequencer
+$ make
 $ ./sequencer
 ```
 
