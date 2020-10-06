@@ -35,6 +35,18 @@ $ make
 $ ./sequencer
 ```
 
+## Alternative Build
+
+You can source the build script to create an out-of-source build. Edit the `./build.sh` file to choose a work directory. The default work directory is `/tmp`.
+
+``` bash
+$ git clone --recurse-submodules https://github.com/zerovectorspace/sequencer
+$ cd ./sequencer
+$ source ./build.sh
+$ make
+$ ./sequencer
+```
+
 ## Samples
 
 You must supply your own samples. They must be placed in the `./res/wav` directory. Here is a list of the filenames.
