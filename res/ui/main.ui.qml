@@ -54,15 +54,6 @@ ApplicationWindow {
       }
 
       ItemDelegate {
-        text: qsTr("List")
-        width: parent.width
-        onClicked: {
-          stackView.push("list.ui.qml")
-          drawer.close()
-        }
-      }
-
-      ItemDelegate {
         text: qsTr("Quit")
         width: parent.width
         onClicked: {
