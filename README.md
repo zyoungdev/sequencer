@@ -2,6 +2,12 @@
 
 A flexible sequencer built in Qt Qml.
 
+## Demo
+[Demo](https://zydev.space/downloads/sequencer-demo.ogv)
+
+![Sequencer Image](https://zydev.space/downloads/sequencer-screenshot.png)
+
+
 ## Features
 
 - Selectable width and height
