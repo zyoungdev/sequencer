@@ -9,6 +9,7 @@ A flexible sequencer built in Qt Qml.
 - Selectable root notes
 - Selectable chord quality
 - Random patterns
+- Save to midi file
 
 ## Prerequisites
 
